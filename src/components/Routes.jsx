@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
+import Divider from '@material-ui/core/Divider';
 import RouteListItem from './RouteListItem.jsx';
 
 // import { withStyles } from '@material-ui/core/styles';
@@ -39,6 +40,7 @@ class Routes extends Component {
       addRoute,
       routes,
       deleteRoute,
+      color,
     } = this.props;
     const { pathName } = this.state;
 
@@ -58,6 +60,7 @@ class Routes extends Component {
         classes={classes}
         deleteRoute={deleteRoute}
         routerCompId={id}
+        color={color}
         />
     ));
 
@@ -95,11 +98,12 @@ class Routes extends Component {
     return (
       <div>
         <FormControl fullWidth={true}>
-          <Grid container alignItems="baseline" align="stretch">
+          <Grid container alignItems="center" align="stretch">
             <Grid item xs={10}>
             <InputLabel className={classes.label} htmlFor="stateful">
               Path: /
             </InputLabel>
+            <br/>
               <TextField
                 id="title-input"
                 label="Path Name"
@@ -146,8 +150,11 @@ class Routes extends Component {
               {componentOptions}
             </Select>
           </div>
+          <br/>
+          <Divider/>
+          <br/>
         <div>
-          Routes:
+          <InputLabel className={classes.label}>Routes:</InputLabel>
           {routeList}
         </div>
       </div>

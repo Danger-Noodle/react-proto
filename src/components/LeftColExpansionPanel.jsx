@@ -107,6 +107,7 @@ const LeftColExpansionPanel = (props) => {
     addRoute = {addRoute}
     routes = {routes}
     deleteRoute = {deleteRoute}
+    color= {color}
   />) : null;
 
   return (

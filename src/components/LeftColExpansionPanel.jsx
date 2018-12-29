@@ -76,7 +76,6 @@ const LeftColExpansionPanel = (props) => {
     moveToTop,
     addRoute,
     deleteRoute,
-    setSelectableParents,
   } = props;
   const {
     title,

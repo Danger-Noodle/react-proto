@@ -230,7 +230,10 @@ export const deleteRoute = (state, { routerCompId, routeCompId }) => ({
       comp.routes = routes;
       return { ...comp };
     }
-    if (comp.id === routeCompId) return { ...comp, route: false, visible: true };
+    if (comp.id === routeCompId) {
+      if (!comp.visible) setVisible(state, comp.id);
+      return { ...comp, route: false };
+    }
     return comp;
   }),
 });

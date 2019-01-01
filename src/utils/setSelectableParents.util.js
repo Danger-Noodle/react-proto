@@ -12,8 +12,12 @@ const getAllChildren = (components, childrenIds, unSelectable = []) => {
 
 const getSelectableParents = ({ id, childrenIds, components }) => {
   const unSelectableParents = getAllChildren(components, childrenIds, [id]);
-  return components
-    .filter(comp => !unSelectableParents.includes(comp.id));
+  const selectableParentsArr = components
+    .filter(comp => !unSelectableParents.includes(comp.id) && comp.visible);
+  return selectableParentsArr.map(({ id, title }) => ({
+    id,
+    title,
+  }));
 };
 
 const setSelectableParents = components => components.map(

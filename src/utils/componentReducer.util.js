@@ -120,19 +120,27 @@ export const deleteComponent = (state, { index, id }) => {
   };
 };
 
-export const addChild = (state, { id, childId }) => {
+export const addChild = (state, { componentId, childId }) => {
   const components = state.components.map((component) => {
-    if (component.id === id) {
+    if (component.id === componentId) {
       const { childrenIds } = component;
       return { ...component, childrenIds: [...childrenIds, childId] };
     }
     return component;
   });
+  console.log('addchild being called');
 
+  // refactor
+  const { refactorComponents } = state;
+  if (refactorComponents[componentId]) {
+    refactorComponents[componentId].childrenIds.push(childId);
+  }
+  //----
 
   return {
     ...state,
     components,
+    refactorComponents,
   };
 };
 
@@ -145,6 +153,7 @@ export const deleteChild = (state, { parent, childId }) => {
     }
     return component;
   });
+
 
   return {
     ...state,

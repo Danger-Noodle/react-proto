@@ -66,6 +66,7 @@ const initialApplicationState = {
   errorOpen: false,
   focusComponent: {},
   components: [],
+  refactorComponents: {},
   compProps: [],
   // compProps - {id , key, value, required, type, displayedAt, origin, availableAt}
   appDir: '',

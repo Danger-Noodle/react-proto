@@ -39,6 +39,11 @@ export const addComponent = (state, { title }) => {
 
   const components = [...state.components, newComponent];
 
+  // refactor
+  const { refactorComponents } = state;
+  refactorComponents[state.nextId] = newComponent;
+  //---
+
   const totalComponents = state.totalComponents + 1;
   const nextId = state.nextId + 1;
 
@@ -47,6 +52,7 @@ export const addComponent = (state, { title }) => {
     totalComponents,
     nextId,
     components,
+    refactorComponents,
     focusComponent: newComponent,
   };
 };
@@ -100,10 +106,16 @@ export const deleteComponent = (state, { index, id }) => {
 
   const totalComponents = state.totalComponents - 1;
 
+  // refactor
+  const { refactorComponents } = state;
+  delete refactorComponents[id];
+  //----
+
   return {
     ...state,
     totalComponents,
     components,
+    refactorComponents,
     focusComponent: focusComponent.id === id ? {} : focusComponent,
   };
 };
@@ -116,6 +128,7 @@ export const addChild = (state, { id, childId }) => {
     }
     return component;
   });
+
 
   return {
     ...state,

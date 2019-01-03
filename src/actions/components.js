@@ -22,6 +22,8 @@ import {
   OPEN_EXPANSION_PANEL,
   DELETE_PROP,
   ADD_PROP,
+  ADD_PROP_TO_DISPLAYED,
+  REMOVE_PROP_FROM_DISPLAYED,
   DELETE_ALL_DATA,
   CHANGE_IMAGE_PATH,
   ADD_ROUTE,
@@ -54,15 +56,15 @@ export const addNewChild = (({
 }));
 
 export const deleteChild = (({
-  parent, childIndex, childId,
+  parent, parentId, childId,
 }) => ({
   type: DELETE_CHILD,
   payload: {
-    parent, childIndex, childId,
+    parent, parentId, childId,
   },
 }));
 
-export const parentReassignment = (({ index, id, parent }) => ({
+export const reassignParent = (({ index, id, parent }) => ({
   type: REASSIGN_PARENT,
   payload: {
     index,
@@ -79,13 +81,12 @@ export const addComponent = ({ title }) => (dispatch) => {
 export const deleteComponent = ({
   index, id, parent, routes,
 }) => (dispatch) => {
-  console.log('routes: ', routes);
   // Delete Component  from its parent if it has a parent.
   if (parent && parent.id) {
-    dispatch(deleteChild({ parent, childId: id, childIndex: index }));
+    dispatch(deleteChild({ parent, childId: id, parentId: parent.id }));
   }
   // Reassign Component's children to its parent if it has one or make them orphans
-  dispatch(parentReassignment({ index, id, parent }));
+  dispatch(reassignParent({ index, id, parent }));
   dispatch({ type: DELETE_COMPONENT, payload: { index, id } });
   dispatch({ type: SET_SELECTABLE_PARENTS });
   // Delete the Component from its parent's routelist
@@ -210,14 +211,24 @@ export const changeImagePath = path => ({
   payload: path,
 });
 
-export const deleteCompProp = ({ id, index }) => ({
+export const deleteProp = propId => ({
   type: DELETE_PROP,
-  payload: { id, index },
+  payload: { propId },
 });
 
-export const addCompProp = prop => ({
+export const addProp = prop => ({
   type: ADD_PROP,
   payload: { ...prop },
+});
+
+export const addPropToDisplayed = (propId, compId) => ({
+  type: ADD_PROP_TO_DISPLAYED,
+  payload: { propId, compId },
+});
+
+export const removePropFromDisplayed = (propId, compId) => ({
+  type: REMOVE_PROP_FROM_DISPLAYED,
+  payload: { propId, compId },
 });
 
 export const addRoute = compToAdd => ({

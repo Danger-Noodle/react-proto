@@ -10,7 +10,8 @@ let composer;
 
 if (process.env.NODE_ENV === 'development') {
   composer = compose(
-    applyMiddleware(logger, thunk),
+    // applyMiddleware(logger, thunk),
+    applyMiddleware(thunk),
     composeWithDevTools(),
   );
 } else {

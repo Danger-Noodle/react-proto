@@ -230,9 +230,9 @@ export const reassignParent = (state, { index, id, parent = {} }) => {
   const componentId = id;
   const { refactorComponents } = state;
   const componentToDelete = refactorComponents[componentId];
-  const newRefactorComponents = refactorComponents;
   // loops through childrenIds array, gives each child the
   // parent's parent if possible
+  const newRefactorComponents = refactorComponents;
   componentToDelete.childrenIds.forEach((el) => {
     newRefactorComponents[el].parentId = componentToDelete.parentId;
   });
@@ -442,12 +442,9 @@ export const addProp = (state, {
   });
 };
 
-// need fix
 export const deleteProp = (state, { propId }) => {
   const { compProps } = state;
   const newCompProps = compProps.filter(el => el.id !== propId);
-  // go down recursively and clean up tree
-
 
   return ({
     ...state,

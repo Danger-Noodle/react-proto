@@ -7,7 +7,6 @@ import {
   DELETE_CHILD,
   REASSIGN_PARENT,
   SET_SELECTABLE_PARENTS,
-  REFACTOR_SET_SELECTABLE_PARENTS,
   SET_SELECTABLE_ROUTES,
   EXPORT_FILES,
   EXPORT_FILES_SUCCESS,
@@ -64,6 +63,16 @@ export const deleteChild = (({
     parent, parentId, childId,
   },
 }));
+
+export const addRoute = compToAdd => ({
+  type: ADD_ROUTE,
+  payload: compToAdd,
+});
+
+export const deleteRoute = compToDelete => ({
+  type: DELETE_ROUTE,
+  payload: compToDelete,
+});
 
 export const reassignParent = (({ index, id, parent }) => ({
   type: REASSIGN_PARENT,
@@ -232,15 +241,6 @@ export const removePropFromDisplayed = (propId, compId) => ({
   payload: { propId, compId },
 });
 
-export const addRoute = compToAdd => ({
-  type: ADD_ROUTE,
-  payload: compToAdd,
-});
-
-export const deleteRoute = compToDelete => ({
-  type: DELETE_ROUTE,
-  payload: compToDelete,
-});
 
 export const setVisible = compId => ({
   type: SET_VISIBLE,
@@ -252,10 +252,4 @@ export const setSelectableParents = () => ({ type: SET_SELECTABLE_PARENTS });
 export const setSelectableRoutes = routerCompId => ({
   type: SET_SELECTABLE_ROUTES,
   payload: routerCompId,
-});
-
-export const refactorSetSelectableParents = () => ({
-  type: REFACTOR_SET_SELECTABLE_PARENTS,
-  payload:
-
 });

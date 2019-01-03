@@ -251,8 +251,9 @@ export const reassignParent = (state, { index, id, parent = {} }) => {
 
 // helper function for setSelectableP
 const refactorGetSelectableParents = (id, childrenIds, refactorComponents) => {
+  console.log('id: ', id, 'childrenIds: ', childrenIds);
   // base case: if the childrenIds array is empty return the id of the object
-  if (childrenIds.length <= 0) return id;
+  if (childrenIds.length <= 0) return [id];
 
   let output = [];
   output.push(id);
@@ -266,7 +267,10 @@ const refactorGetSelectableParents = (id, childrenIds, refactorComponents) => {
 
 /* should eventually be refactored so that it is only called for an
  individual component when that individual component is rendered */
-export const setSelectableP = (state, refactorComponents) => {
+export const setSelectableP = (state) => {
+  console.log('set Selectable Parents');
+  // refactor
+  const { refactorComponents } = state;
   const keys = Object.keys(refactorComponents);
   const newRefactorComponents = {};
   // for each variable
@@ -274,14 +278,14 @@ export const setSelectableP = (state, refactorComponents) => {
     // gets all children in el's lineage
     const filter = refactorGetSelectableParents(el, refactorComponents[el].childrenIds, refactorComponents);
     // filters out all keys that exist in lineage (and also the el)
-    const selectableParents = keys.filter(key => ((filter.indexOf(parseInt(key, 10)) < 0) && (key !== el)));
+    const selectableParents = keys.filter(key => ((filter.indexOf(key) < 0) && (key !== el)));
     // adds to new object
     newRefactorComponents[el] = {
       ...refactorComponents[el],
       selectableParents,
     };
   });
-  console.log(newRefactorComponents);
+  //-----
 
   return {
     ...state,
@@ -325,8 +329,8 @@ export const deleteRoute = (state, { routerCompId, routeCompId }) => ({
         if (route.routeCompId === routeCompId) indexOfRouteToDelete = i;
       });
       routes.splice(indexOfRouteToDelete, 1);
-      comp.routes = routes;
-      return { ...comp };
+      // comp.routes = routes;
+      return { ...comp, routes };
     }
     if (comp.id === routeCompId) {
       if (!comp.visible) setVisible(state, comp.id);
@@ -532,8 +536,8 @@ export const setVisible = (state, compId) => ({
   components: state.components.map((comp) => {
     if (comp.parentId === compId) setVisible(state, comp.id);
     if (comp.id === compId) {
-      comp.visible = !comp.visible;
-      return { ...comp };
+      // comp.visible = !comp.visible;
+      return { ...comp, visible: !comp.visible };
     }
     return comp;
   }),

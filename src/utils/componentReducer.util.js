@@ -230,26 +230,65 @@ export const reassignParent = (state, { index, id, parent = {} }) => {
   const componentId = id;
   const { refactorComponents } = state;
   const componentToDelete = refactorComponents[componentId];
+  const newRefactorComponents = refactorComponents;
   // loops through childrenIds array, gives each child the
   // parent's parent if possible
-  const newRefactorComponents = refactorComponents;
   componentToDelete.childrenIds.forEach((el) => {
     newRefactorComponents[el].parentId = componentToDelete.parentId;
   });
-
-
+  if (componentToDelete.parentId !== '') {
+    newRefactorComponents[componentToDelete.parentId].childrenIds = componentToDelete.childrenIds;
+  }
+  console.log(newRefactorComponents);
   //-----
 
   return {
     ...state,
     components,
+    refactorComponents: newRefactorComponents,
   };
 };
 
-export const setSelectableP = state => ({
-  ...state,
-  components: setSelectableParents(state.components),
-});
+// helper function for setSelectableP
+const refactorGetSelectableParents = (id, childrenIds, refactorComponents) => {
+  // base case: if the childrenIds array is empty return the id of the object
+  if (childrenIds.length <= 0) return id;
+
+  let output = [];
+  output.push(id);
+  // otherwise for each element in childrenIds, call the function and add to output
+  childrenIds.forEach((el) => {
+    output = output.concat(refactorGetSelectableParents(el, refactorComponents[el].childrenIds, refactorComponents));
+  });
+
+  return output;
+};
+
+/* should eventually be refactored so that it is only called for an
+ individual component when that individual component is rendered */
+export const setSelectableP = (state, refactorComponents) => {
+  const keys = Object.keys(refactorComponents);
+  const newRefactorComponents = {};
+  // for each variable
+  keys.forEach((el) => {
+    // gets all children in el's lineage
+    const filter = refactorGetSelectableParents(el, refactorComponents[el].childrenIds, refactorComponents);
+    // filters out all keys that exist in lineage (and also the el)
+    const selectableParents = keys.filter(key => ((filter.indexOf(parseInt(key, 10)) < 0) && (key !== el)));
+    // adds to new object
+    newRefactorComponents[el] = {
+      ...refactorComponents[el],
+      selectableParents,
+    };
+  });
+  console.log(newRefactorComponents);
+
+  return {
+    ...state,
+    components: setSelectableParents(state.components),
+    refactorComponents: newRefactorComponents,
+  };
+};
 
 export const setSelectableR = (state, id) => ({
   ...state,

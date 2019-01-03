@@ -3,11 +3,12 @@ import {
   ADD_COMPONENT,
   UPDATE_COMPONENT,
   DELETE_COMPONENT,
-  ADD_NEW_CHILD,
+  ADD_CHILD,
   DELETE_CHILD,
   REASSIGN_PARENT,
   SET_SELECTABLE_PARENTS,
   SET_SELECTABLE_ROUTES,
+  REFACTOR_SET_SELECTABLE_PARENTS,
   EXPORT_FILES,
   CREATE_APPLICATION,
   EXPORT_FILES_SUCCESS,
@@ -90,7 +91,7 @@ const componentReducer = (state = initialApplicationState, action) => {
       return updateComponent(state, action.payload);
     case DELETE_COMPONENT:
       return deleteComponent(state, action.payload);
-    case ADD_NEW_CHILD:
+    case ADD_CHILD:
       return addChild(state, action.payload);
     case DELETE_CHILD:
       return deleteChild(state, action.payload);

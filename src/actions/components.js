@@ -3,10 +3,11 @@ import {
   ADD_COMPONENT,
   UPDATE_COMPONENT,
   DELETE_COMPONENT,
-  ADD_NEW_CHILD,
+  ADD_CHILD,
   DELETE_CHILD,
   REASSIGN_PARENT,
   SET_SELECTABLE_PARENTS,
+  REFACTOR_SET_SELECTABLE_PARENTS,
   SET_SELECTABLE_ROUTES,
   EXPORT_FILES,
   EXPORT_FILES_SUCCESS,
@@ -49,7 +50,7 @@ export const loadInitData = () => (dispatch) => {
 export const addNewChild = (({
   id, childIndex, childId,
 }) => ({
-  type: ADD_NEW_CHILD,
+  type: ADD_CHILD,
   payload: {
     id, childIndex, childId,
   },
@@ -251,4 +252,10 @@ export const setSelectableParents = () => ({ type: SET_SELECTABLE_PARENTS });
 export const setSelectableRoutes = routerCompId => ({
   type: SET_SELECTABLE_ROUTES,
   payload: routerCompId,
+});
+
+export const refactorSetSelectableParents = () => ({
+  type: REFACTOR_SET_SELECTABLE_PARENTS,
+  payload:
+
 });

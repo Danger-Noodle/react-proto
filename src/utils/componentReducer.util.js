@@ -128,7 +128,6 @@ export const addChild = (state, { id, childId }) => {
     }
     return component;
   });
-  console.log('addchild being called');
 
   // refactor
   const componentId = id;
@@ -162,7 +161,6 @@ export const deleteChild = (state, { parent, childId }) => {
   const { refactorComponents } = state;
   const newChildrenIds = refactorComponents[parentId].childrenIds.filter(el => el !== childId);
   refactorComponents[parentId].childrenIds = newChildrenIds;
-  console.log('new children id', newChildrenIds);
   //----
 
 
@@ -208,7 +206,7 @@ export const changeImagePath = (state, imagePath) => ({
   imagePath,
 });
 
-export const reassignParent = (state, { index, parent = {} }) => {
+export const reassignParent = (state, { index, id, parent = {} }) => {
   // Get all childrenIds of the component to be deleted
   const { childrenIds } = state.components[index];
   const components = state.components.map((comp) => {
@@ -229,6 +227,15 @@ export const reassignParent = (state, { index, parent = {} }) => {
   console.log('reassign parent');
 
   // refactor
+  const componentId = id;
+  const { refactorComponents } = state;
+  const componentToDelete = refactorComponents[componentId];
+  const newRefactorComponents = refactorComponents;
+  // loops through childrenIds array, gives each child the
+  // parent's parent if possible
+  componentToDelete.childrenIds.forEach((el) => {
+    newRefactorComponents[el].parentId = componentToDelete.parentId;
+  });
 
 
   //-----

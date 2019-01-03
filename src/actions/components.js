@@ -64,7 +64,7 @@ export const deleteChild = (({
   },
 }));
 
-export const parentReassignment = (({ index, id, parent }) => ({
+export const reassignParent = (({ index, id, parent }) => ({
   type: REASSIGN_PARENT,
   payload: {
     index,
@@ -81,13 +81,12 @@ export const addComponent = ({ title }) => (dispatch) => {
 export const deleteComponent = ({
   index, id, parent, routes,
 }) => (dispatch) => {
-  console.log('routes: ', routes);
   // Delete Component  from its parent if it has a parent.
   if (parent && parent.id) {
     dispatch(deleteChild({ parent, childId: id, parentId: parent.id }));
   }
   // Reassign Component's children to its parent if it has one or make them orphans
-  dispatch(parentReassignment({ index, id, parent }));
+  dispatch(reassignParent({ index, id, parent }));
   dispatch({ type: DELETE_COMPONENT, payload: { index, id } });
   dispatch({ type: SET_SELECTABLE_PARENTS });
   // Delete the Component from its parent's routelist

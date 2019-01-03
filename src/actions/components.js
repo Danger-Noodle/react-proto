@@ -56,11 +56,11 @@ export const addNewChild = (({
 }));
 
 export const deleteChild = (({
-  parent, childIndex, childId,
+  parent, parentId, childId,
 }) => ({
   type: DELETE_CHILD,
   payload: {
-    parent, childIndex, childId,
+    parent, parentId, childId,
   },
 }));
 
@@ -84,7 +84,7 @@ export const deleteComponent = ({
   console.log('routes: ', routes);
   // Delete Component  from its parent if it has a parent.
   if (parent && parent.id) {
-    dispatch(deleteChild({ parent, childId: id, childIndex: index }));
+    dispatch(deleteChild({ parent, childId: id, parentId: parent.id }));
   }
   // Reassign Component's children to its parent if it has one or make them orphans
   dispatch(parentReassignment({ index, id, parent }));

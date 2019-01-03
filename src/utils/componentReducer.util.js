@@ -147,7 +147,7 @@ export const addChild = (state, { id, childId }) => {
   };
 };
 
-export const deleteChild = (state, { parent, childId }) => {
+export const deleteChild = (state, { parent, childId, parentId }) => {
   const components = state.components.map((component) => {
     if (component.id === parent.id) {
       // Find child with matching id and remove from children
@@ -158,14 +158,17 @@ export const deleteChild = (state, { parent, childId }) => {
   });
 
   // refactor
-
-
+  const { refactorComponents } = state;
+  const newChildrenIds = refactorComponents[parentId].childrenIds.slice();
+  newChildrenIds.splice(newChildrenIds.indexOf(childId));
+  refactorComponents[parentId].childrenIds = newChildrenIds;
   //----
 
 
   return {
     ...state,
     components,
+    refactorComponents,
   };
 };
 

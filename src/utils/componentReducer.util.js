@@ -147,7 +147,7 @@ export const addChild = (state, { id, childId }) => {
   };
 };
 
-export const deleteChild = (state, { parent, childId, parentId }) => {
+export const deleteChild = (state, { parent, childId }) => {
   const components = state.components.map((component) => {
     if (component.id === parent.id) {
       // Find child with matching id and remove from children
@@ -158,10 +158,11 @@ export const deleteChild = (state, { parent, childId, parentId }) => {
   });
 
   // refactor
+  const parentId = parent.id;
   const { refactorComponents } = state;
-  const newChildrenIds = refactorComponents[parentId].childrenIds.slice();
-  newChildrenIds.splice(newChildrenIds.indexOf(childId));
+  const newChildrenIds = refactorComponents[parentId].childrenIds.filter(el => el !== childId);
   refactorComponents[parentId].childrenIds = newChildrenIds;
+  console.log('new children id', newChildrenIds);
   //----
 
 
@@ -183,6 +184,12 @@ export const moveToTop = (state, componentId) => {
   const index = components.findIndex(component => component.id === componentId);
   const removedComponent = components.splice(index, 1);
   components.push(removedComponent[0]);
+
+  // refactor
+
+
+  //----
+
 
   return {
     ...state,
@@ -219,6 +226,12 @@ export const reassignParent = (state, { index, parent = {} }) => {
     }
     return comp;
   });
+  console.log('reassign parent');
+
+  // refactor
+
+
+  //-----
 
   return {
     ...state,

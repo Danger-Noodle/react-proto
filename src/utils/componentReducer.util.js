@@ -120,9 +120,9 @@ export const deleteComponent = (state, { index, id }) => {
   };
 };
 
-export const addChild = (state, { componentId, childId }) => {
+export const addChild = (state, { id, childId }) => {
   const components = state.components.map((component) => {
-    if (component.id === componentId) {
+    if (component.id === id) {
       const { childrenIds } = component;
       return { ...component, childrenIds: [...childrenIds, childId] };
     }
@@ -131,9 +131,12 @@ export const addChild = (state, { componentId, childId }) => {
   console.log('addchild being called');
 
   // refactor
+  const componentId = id;
   const { refactorComponents } = state;
-  if (refactorComponents[componentId]) {
-    refactorComponents[componentId].childrenIds.push(childId);
+  if (componentId in refactorComponents) {
+    const newChildrenIds = refactorComponents[componentId].childrenIds.slice();
+    newChildrenIds.push(childId);
+    refactorComponents[componentId].childrenIds = newChildrenIds;
   }
   //----
 
@@ -153,6 +156,11 @@ export const deleteChild = (state, { parent, childId }) => {
     }
     return component;
   });
+
+  // refactor
+
+
+  //----
 
 
   return {

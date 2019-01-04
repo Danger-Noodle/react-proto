@@ -366,7 +366,6 @@ export const deleteRoute = (state, { routerCompId, routeCompId }) => {
           if (route.routeCompId === routeCompId) indexOfRouteToDelete = i;
         });
         routes.splice(indexOfRouteToDelete, 1);
-        // comp.routes = routes;
         return { ...comp, routes };
       }
       if (comp.id === routeCompId) {
@@ -447,7 +446,7 @@ export const updatePosition = (state, { id, x, y }) => {
  * @param {number} x - updated x coordinate
  * @param {number} y - updated y coordinate
  * @param {number} width - updated width
- * @param {number} height - updated height
+ * @param {number} heiht - updated height
  */
 
 export const handleTransform = (state, {
@@ -467,9 +466,18 @@ export const handleTransform = (state, {
     }
     return component;
   });
+
+  // refactor
+  const refactorComponents = { ...state.refactorComponents };
+  refactorComponents[id].position = {
+    x, y, width, height,
+  };
+  //----
+
   return {
     ...state,
     components,
+    refactorComponents,
   };
 };
 
@@ -485,9 +493,17 @@ export const toggleDragging = (state, status) => {
     ...component,
     draggable: status,
   }));
+
+  // refactor
+  const refactorComponents = { ...state.refactorComponents };
+  refactorComponents.draggable = status;
+  //-----
+
+
   return {
     ...state,
     components,
+    refactorComponents,
   };
 };
 

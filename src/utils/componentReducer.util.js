@@ -89,10 +89,23 @@ export const updateComponent = (
     return comp;
   });
 
+  // refactor
+  // eventually should be broken into their own functions
+  console.log('updateComponent id: ', id);
+  const refactorComponents = { ...state.refactorComponents };
+  console.log(refactorComponents);
+  refactorComponents[id].parentId = newParentId || refactorComponents[id].parentId;
+  refactorComponents[id].color = color || refactorComponents[id].color;
+  refactorComponents[id].stateful = stateful || refactorComponents[id].stateful;
+  refactorComponents[id].router = router || refactorComponents[id].router;
+  //-----
+
+
   return {
     ...state,
     components,
     focusComponent: component,
+    refactorComponents,
   };
 };
 
@@ -274,7 +287,7 @@ export const setSelectableP = (state) => {
     // gets all children in el's lineage
     const filter = refactorGetSelectableParents(el, refactorComponents[el].childrenIds, refactorComponents);
     // filters out all keys that exist in lineage (and also the el)
-    const selectableParents = keys.filter(key => ((filter.indexOf(key) < 0) && (key !== el)));
+    const selectableParents = keys.filter(key => (!(filter.includes(key)) && (key !== el)));
     // adds to new object
     newRefactorComponents[el] = {
       ...refactorComponents[el],
@@ -295,7 +308,8 @@ export const setSelectableR = (state, id) => {
   const refactorComponents = { ...state.refactorComponents };
   const compToChange = refactorComponents[id];
   // displays component as possible route if the element in the array is present in the childrenIds but not in the routes
-  const compsToAdd = compToChange.childrenIds.filter(el => compToChange.routes.indexOf(el) < 0);
+  const routesArr = compToChange.routes.map(el => el.id);
+  const compsToAdd = compToChange.childrenIds.filter(el => !(routesArr.includes(el)));
 
   // this is necessary to interact with legacy code. creates an object --
   const newSelectableRoutes = compsToAdd.map(el => ({
@@ -318,11 +332,14 @@ export const addRoute = (state, { path, routerCompId, routeCompId }) => {
   // refactor
   const refactorComponents = { ...state.refactorComponents };
 
-  refactorComponents[routerCompId].routes.push({
-    path,
-    routeCompId,
-    title: refactorComponents[routeCompId].title,
-  });
+  refactorComponents[routerCompId].routes = [...refactorComponents[routerCompId].routes,
+    {
+      path,
+      routeCompId,
+      title: refactorComponents[routeCompId].title,
+    }];
+
+
   //-----
 
   return {
@@ -536,9 +553,9 @@ export const moveToBottom = (state, componentId) => {
 export const openExpansionPanel = (state, { component }) => ({
   ...state,
   focusComponent: component,
+  // focusComponent: state.refactorComponent[componentId],
 });
 
-// done
 export const addProp = (state, {
   key, value = null, required, type, origin,
 }) => {

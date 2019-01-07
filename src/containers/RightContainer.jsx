@@ -9,6 +9,9 @@ import {
 } from '../actions/components';
 import Snackbars from '../components/Snackbars.jsx';
 import RightTabs from '../components/RightTabs.jsx';
+import styles from './RightContainerStyles';
+import SortableComponent from '../components/SortableComponent.jsx';
+import Props from '../components/Props.jsx';
 
 const IPC = require('electron').ipcRenderer;
 
@@ -29,16 +32,18 @@ class RightContainer extends Component {
   state = {
     successOpen: false,
     errorOpen: false,
-  }
+  };
 
   viewAppDir = () => {
     IPC.send('view_app_dir', this.props.appDir);
-  }
+  };
 
   handleExpansionPanelChange = (component) => {
     const { focusComponent } = this.props;
-    this.props.openExpansionPanel(focusComponent.id === component.id ? {} : component);
-  }
+    this.props.openExpansionPanel(
+      focusComponent.id === component.id ? {} : component,
+    );
+  };
 
   render() {
     const {
@@ -54,14 +59,27 @@ class RightContainer extends Component {
     } = this.props;
 
     return (
-      <div className='column-right' style={{ width: `${this.props.width}%` }} >
-        <RightTabs
+      <div className="column-right" style={{ width: `${this.props.width}%` }}>
+        {/* <RightTabs
           components={components}
           focusComponent={focusComponent}
           rightColumnOpen={rightColumnOpen}
           setVisible={setVisible}
           onExpansionPanelChange={this.handleExpansionPanelChange}
           setSelectableParents={setSelectableParents}
+        /> */}
+        <SortableComponent
+          components={components}
+          setVisible={setVisible}
+          setSelectableParents={setSelectableParents}
+          openExpansionPanelChange={this.handleExpansionPanelChange}
+          styles={styles}
+        />
+        <Props
+          rightColumnOpen={rightColumnOpen}
+          focusComponent={focusComponent}
+          components={components}
+          styles={styles}
         />
         <Snackbars
           successOpen={successOpen}
@@ -86,5 +104,7 @@ RightContainer.propTypes = {
   openExpansionPanel: PropTypes.func.isRequired,
 };
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(RightContainer);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(RightContainer);

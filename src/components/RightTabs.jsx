@@ -52,8 +52,8 @@ class RightTabs extends Component {
                   color='primary'
                   badgeContent={focusComponent.props.length}
                 >
-                  Props
-                </Badge> : 'Props'
+                  State
+                </Badge> : 'State'
             }
           />
         </Tabs>

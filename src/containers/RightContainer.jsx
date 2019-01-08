@@ -9,7 +9,6 @@ import {
 } from '../actions/components';
 import Snackbars from '../components/Snackbars.jsx';
 import RightTabs from '../components/RightTabs.jsx';
-import styles from './RightContainerStyles';
 import SortableComponent from '../components/SortableComponent.jsx';
 import Props from '../components/Props.jsx';
 
@@ -72,14 +71,12 @@ class RightContainer extends Component {
           rightColumnOpen={rightColumnOpen}
           focusComponent={focusComponent}
           components={components}
-          styles={styles}
         />
         <SortableComponent
           components={components}
           setVisible={setVisible}
           setSelectableParents={setSelectableParents}
           openExpansionPanelChange={this.handleExpansionPanelChange}
-          styles={styles}
         />
 
         <Snackbars

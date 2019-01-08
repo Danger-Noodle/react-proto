@@ -11,13 +11,17 @@ import {
   Chip,
   Switch,
   InputLabel,
+  Paper,
   Typography,
 } from '@material-ui/core';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import {
-  deleteProp, addProp, addPropToDisplayed, removePropFromDisplayed,
+  deleteProp,
+  addProp,
+  addPropToDisplayed,
+  removePropFromDisplayed,
 } from '../actions/components';
 import styles from './PropsStyle';
 
@@ -118,10 +122,6 @@ class Props extends Component {
 
   parentPropHandler(id, compId) {
     const propId = id.id;
-<<<<<<< HEAD
-=======
-    // console.log('parent prop handler');
->>>>>>> 8d61bde4c601e0d36157800303aa7d883b6f8bfe
     // adds to seen at in props object in store
     this.props.addPropToDisplayed(propId, compId);
   }
@@ -129,12 +129,7 @@ class Props extends Component {
   deleteHandler(id, compId) {
     // deletes prop from store if this is origin
     // otherwise removes it from the seenAt array
-<<<<<<< HEAD
-    const { compProps, deleteProp, removePropFromDisplayed } = this.props;
-=======
-    // console.log('id: ', id, 'compId: ', compId);
     const { compProps } = this.props;
->>>>>>> 8d61bde4c601e0d36157800303aa7d883b6f8bfe
     const propId = id.id;
     // if it is from origin then do deleteProp
     if (compProps.reduce((a, b) => (b.origin === compId ? b : a), null)) {
@@ -145,16 +140,15 @@ class Props extends Component {
 
   render() {
     const {
-      focusComponent,
-      classes,
-      rightColumnOpen,
-      compProps,
+      focusComponent, classes, rightColumnOpen, compProps,
     } = this.props;
 
     return (
       <div style={{ display: rightColumnOpen ? 'inline' : 'none' }}>
         {' '}
-        <Typography className={classes.label}>State</Typography>
+        <Paper className={classes.headLabel} >
+              <Typography className={classes.headText}>State Management</Typography>
+        </Paper>
         {Object.keys(focusComponent).length < 1 ? (
           <div style={{ marginTop: '20px', marginLeft: '20px' }}>
             Click a component to view its props.
@@ -244,6 +238,9 @@ class Props extends Component {
                 </Grid>
               </Grid>
             </form>
+            <Paper className={classes.stateLabel}>
+              <Typography className={classes.stateText}>State</Typography>
+            </Paper>
             <div className="chips">
               {compProps
                 .filter(
@@ -280,12 +277,16 @@ class Props extends Component {
                   );
                 })}
             </div>
-            <Typography className={classes.label}>Parent Props</Typography>
+            <Paper className={classes.stateLabel}>
+              <Typography className={classes.stateText}>Props</Typography>
+            </Paper>
             {compProps
               // display if the parents contain it and the prop doesnt contain the current id
-              .filter(el => (focusComponent.parentId === el.origin
-                || el.displayedAt.indexOf(focusComponent.parentId) >= 0)
-                && el.displayedAt.indexOf(focusComponent.id) < 0)
+              .filter(
+                el => (focusComponent.parentId === el.origin
+                    || el.displayedAt.indexOf(focusComponent.parentId) >= 0)
+                  && el.displayedAt.indexOf(focusComponent.id) < 0,
+              )
               .map((el) => {
                 const {
                   id, key, value, required, type,

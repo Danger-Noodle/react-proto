@@ -6,6 +6,9 @@ import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import InfoIcon from '@material-ui/icons/InfoOutlined';
+import { Typography, Paper } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import styles from './PropsStyle';
 
 const SortableComponent = (props) => {
   const {
@@ -13,11 +16,12 @@ const SortableComponent = (props) => {
     setVisible,
     onExpansionPanelChange,
     setSelectableParents,
+    classes,
   } = props;
 
-  const rootComponents = components.filter(
-    comp => comp.parentId.length === 0,
-  ).reverse();
+  const rootComponents = components
+    .filter(comp => comp.parentId.length === 0)
+    .reverse();
 
   const toggleViewBtn = (rowInfo) => {
     setVisible(rowInfo.node.id);
@@ -31,31 +35,35 @@ const SortableComponent = (props) => {
   const generateNodeProps = (rowInfo) => {
     const rowProps = {
       buttons: [
-         <InfoIcon key={rowInfo.node.id}
-         className='row_color'
-         onClick={() => nodeClicked(rowInfo)}
-         style={{
-           color: rowInfo.node.color,
-         }}
-     >
-     </InfoIcon>,
+        <InfoIcon
+          key={rowInfo.node.id}
+          className="row_color"
+          onClick={() => nodeClicked(rowInfo)}
+          style={{
+            color: rowInfo.node.color,
+          }}
+        />,
       ],
     };
     if (rowInfo.node.route) {
       rowProps.buttons.push(
-        rowInfo.node.visible ? (<VisibilityIcon key='1'
+        rowInfo.node.visible ? (
+          <VisibilityIcon
+            key="1"
             style={{
               color: rowInfo.node.color,
             }}
             onClick={() => toggleViewBtn(rowInfo)}
-        >
-        </VisibilityIcon>) : (<VisibilityOff key='1'
+          />
+        ) : (
+          <VisibilityOff
+            key="1"
             style={{
               color: rowInfo.node.color,
             }}
             onClick={() => toggleViewBtn(rowInfo)}
-        >
-        </VisibilityOff>),
+          />
+        ),
       );
     }
     return rowProps;
@@ -63,6 +71,9 @@ const SortableComponent = (props) => {
 
   return (
     <div className="sortable-tree">
+      <Paper className={classes.headLabel}>
+        <Typography className={classes.headText}>Hierarchy</Typography>
+      </Paper>
       <SortableTree
         style={{ backgroundColor: 'rgb(37, 37, 38)' }}
         treeData={rootComponents}
@@ -74,7 +85,7 @@ const SortableComponent = (props) => {
   );
 };
 
-export default SortableComponent;
+export default withStyles(styles)(SortableComponent);
 
 SortableComponent.propTypes = {
   components: PropTypes.array,

@@ -1,3 +1,4 @@
+import { orange } from '@material-ui/core/colors';
 
 const styles = theme => ({
   root: {
@@ -47,10 +48,11 @@ const styles = theme => ({
   },
   headText: {
     color: '#eee',
-    fontSize: '25px',
+    fontSize: '20px',
+    padding: '6px',
   },
   stateLabel: {
-    backgroundColor: '#252526',
+    backgroundColor: '#303030',
     margin: '5px',
     marginLeft: '20px',
     elevation: '20',
@@ -64,6 +66,20 @@ const styles = theme => ({
   avatar: {
     color: '#eee',
     fontSize: '10px',
+  },
+  chips: {
+    height: '20%',
+    minHeight: '50px',
+    maxHeight: '100px',
+    overflowX: 'auto',
+    marginLeft: '15px',
+  },
+  clickText: {
+    marginTop: '20px',
+    marginBottom: '10px',
+    marginLeft: '5px',
+    fontSize: '18px',
+    color: '#a6a6a6',
   },
 });
 export default styles;

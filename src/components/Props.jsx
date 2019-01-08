@@ -150,13 +150,13 @@ class Props extends Component {
               <Typography className={classes.headText}>State Management</Typography>
         </Paper>
         {Object.keys(focusComponent).length < 1 ? (
-          <div style={{ marginTop: '20px', marginLeft: '20px' }}>
+          <Typography className={classes.clickText}>
             Click a component to view its props.
-          </div>
+          </Typography>
         ) : (
           <div className="props-container">
             <form className="props-input" onSubmit={this.handleAddProp}>
-              <Grid container spacing={24}>
+              <Grid container spacing={24} justify='space-evenly' alignItems='baseline'>
                 <Grid item xs={6}>
                   <TextField
                     id="propKey"
@@ -174,7 +174,7 @@ class Props extends Component {
                     }}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <TextField
                     id="propValue"
                     label="Value"
@@ -188,7 +188,7 @@ class Props extends Component {
                     }}
                     value={this.state.propValue}
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={6}>
                   <FormControl required>
                     <InputLabel className={classes.light} htmlFor="propType">
@@ -224,7 +224,7 @@ class Props extends Component {
                     />
                   </div>
                 </Grid>
-                <Grid item>
+                <Grid item xs={6}>
                   <Button
                     color="primary"
                     aria-label="Add"
@@ -241,7 +241,7 @@ class Props extends Component {
             <Paper className={classes.stateLabel}>
               <Typography className={classes.stateText}>State</Typography>
             </Paper>
-            <div className="chips">
+            <div className= {classes.chips}>
               {compProps
                 .filter(
                   el => el.origin === focusComponent.id
@@ -280,6 +280,7 @@ class Props extends Component {
             <Paper className={classes.stateLabel}>
               <Typography className={classes.stateText}>Props</Typography>
             </Paper>
+            <div className={classes.chips}>
             {compProps
               // display if the parents contain it and the prop doesnt contain the current id
               .filter(
@@ -316,6 +317,7 @@ class Props extends Component {
                   />
                 );
               })}
+              </div>
           </div>
         )}
       </div>

@@ -75,7 +75,6 @@ const SortableComponent = (props) => {
         <Typography className={classes.headText}>Hierarchy</Typography>
       </Paper>
       <SortableTree
-        style={{ backgroundColor: 'rgb(37, 37, 38)' }}
         treeData={rootComponents}
         canDrag={false}
         onChange={treeData => this.setState({ treeData })}

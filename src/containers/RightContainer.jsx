@@ -67,16 +67,17 @@ class RightContainer extends Component {
           onExpansionPanelChange={this.handleExpansionPanelChange}
           setSelectableParents={setSelectableParents}
         /> */}
-        <Props
-          rightColumnOpen={rightColumnOpen}
-          focusComponent={focusComponent}
-          components={components}
-        />
         <SortableComponent
           components={components}
           setVisible={setVisible}
           setSelectableParents={setSelectableParents}
           openExpansionPanelChange={this.handleExpansionPanelChange}
+        />
+
+        <Props
+          rightColumnOpen={rightColumnOpen}
+          focusComponent={focusComponent}
+          components={components}
         />
 
         <Snackbars

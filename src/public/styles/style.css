@@ -203,16 +203,17 @@ RIGHT COLUMN
   height: 100%;
   display: flex; 
   flex-direction: column;
-  background-color: #303030;
+  background-color: #252526;
 }
 
 .props-container {
   margin-left: 10px;
-  height: 100%;
+  height: 50%;
 }
 
 .props-input {
   margin-bottom: 15px;
+  height:20%;
 }
 
 .chips {
@@ -222,8 +223,10 @@ RIGHT COLUMN
 
 /* Sortable tree sorting */
 .sortable-tree {
-  height: 100%;
-  background-color: rgb(37, 37, 38);
+  height: 40%;
+  max-height: 40%;
+  margin:0px;
+  margin-bottom:45px;
 }
 
 div.rst__rowContents {

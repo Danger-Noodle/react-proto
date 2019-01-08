@@ -19,6 +19,7 @@ import { compose } from 'redux';
 import {
   deleteProp, addProp, addPropToDisplayed, removePropFromDisplayed,
 } from '../actions/components';
+import styles from './PropsStyle';
 
 const mapDispatchToProps = dispatch => ({
   deleteProp: id => dispatch(deleteProp(id)),
@@ -34,53 +35,6 @@ const mapDispatchToProps = dispatch => ({
 const mapStateToProps = state => ({
   compProps: state.workspace.compProps,
   components: state.workspace.components,
-});
-
-const styles = theme => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: theme.spacing.unit,
-    color: '#eee',
-    backgroundColor: '#333333',
-  },
-  column: {
-    display: 'inline-flex',
-    alignItems: 'baseline',
-  },
-  icon: {
-    fontSize: '20px',
-    color: '#eee',
-    opacity: '0.7',
-    transition: 'all .2s ease',
-
-    '&:hover': {
-      color: 'red',
-    },
-  },
-  cssLabel: {
-    color: 'white',
-
-    '&$cssFocused': {
-      color: 'green',
-    },
-  },
-  cssFocused: {},
-  input: {
-    color: '#eee',
-    marginBottom: '10px',
-    width: '60%',
-  },
-  light: {
-    color: '#eee',
-  },
-  avatar: {
-    color: '#eee',
-    fontSize: '10px',
-  },
 });
 
 const availablePropTypes = {
@@ -164,7 +118,6 @@ class Props extends Component {
 
   parentPropHandler(id, compId) {
     const propId = id.id;
-    console.log('parent prop handler');
     // adds to seen at in props object in store
     this.props.addPropToDisplayed(propId, compId);
   }
@@ -172,7 +125,6 @@ class Props extends Component {
   deleteHandler(id, compId) {
     // deletes prop from store if this is origin
     // otherwise removes it from the seenAt array
-    console.log('id: ', id, 'compId: ', compId);
     const { compProps, deleteProp, removePropFromDisplayed } = this.props;
     const propId = id.id;
     // if it is from origin then do deleteProp
@@ -203,6 +155,7 @@ class Props extends Component {
     return (
       <div style={{ display: rightColumnOpen ? 'inline' : 'none' }}>
         {' '}
+        <Typography className={classes.label}>State</Typography>
         {Object.keys(focusComponent).length < 1 ? (
           <div style={{ marginTop: '20px', marginLeft: '20px' }}>
             Click a component to view its props.

@@ -89,10 +89,23 @@ export const updateComponent = (
     return comp;
   });
 
+  // refactor
+  // eventually should be broken into their own functions
+  console.log('updateComponent id: ', id);
+  const refactorComponents = { ...state.refactorComponents };
+  console.log(refactorComponents);
+  refactorComponents[id].parentId = newParentId || refactorComponents[id].parentId;
+  refactorComponents[id].color = color || refactorComponents[id].color;
+  refactorComponents[id].stateful = stateful || refactorComponents[id].stateful;
+  refactorComponents[id].router = router || refactorComponents[id].router;
+  //-----
+
+
   return {
     ...state,
     components,
     focusComponent: component,
+    refactorComponents,
   };
 };
 
@@ -107,15 +120,15 @@ export const deleteComponent = (state, { index, id }) => {
   const totalComponents = state.totalComponents - 1;
 
   // refactor
-  const { refactorComponents } = state;
-  delete refactorComponents[id];
+  const newRefactorComponents = { ...state.refactorComponents };
+  delete newRefactorComponents[id];
   //----
 
   return {
     ...state,
     totalComponents,
     components,
-    refactorComponents,
+    refactorComponents: newRefactorComponents,
     focusComponent: focusComponent.id === id ? {} : focusComponent,
   };
 };
@@ -131,18 +144,18 @@ export const addChild = (state, { id, childId }) => {
 
   // refactor
   const componentId = id;
-  const { refactorComponents } = state;
-  if (componentId in refactorComponents) {
-    const newChildrenIds = refactorComponents[componentId].childrenIds.slice();
+  const newRefactorComponents = { ...state.refactorComponents };
+  if (componentId in newRefactorComponents) {
+    const newChildrenIds = newRefactorComponents[componentId].childrenIds.slice();
     newChildrenIds.push(childId);
-    refactorComponents[componentId].childrenIds = newChildrenIds;
+    newRefactorComponents[componentId].childrenIds = newChildrenIds;
   }
   //----
 
   return {
     ...state,
     components,
-    refactorComponents,
+    refactorComponents: newRefactorComponents,
   };
 };
 
@@ -159,15 +172,16 @@ export const deleteChild = (state, { parent, childId }) => {
   // refactor
   const parentId = parent.id;
   const { refactorComponents } = state;
-  const newChildrenIds = refactorComponents[parentId].childrenIds.filter(el => el !== childId);
-  refactorComponents[parentId].childrenIds = newChildrenIds;
+  const newRefactorComponents = { ...refactorComponents };
+  const newChildrenIds = newRefactorComponents[parentId].childrenIds.filter(el => el !== childId);
+  newRefactorComponents[parentId].childrenIds = newChildrenIds;
   //----
 
 
   return {
     ...state,
     components,
-    refactorComponents,
+    refactorComponents: newRefactorComponents,
   };
 };
 
@@ -224,78 +238,162 @@ export const reassignParent = (state, { index, id, parent = {} }) => {
     }
     return comp;
   });
-  console.log('reassign parent');
 
   // refactor
   const componentId = id;
-  const { refactorComponents } = state;
-  const componentToDelete = refactorComponents[componentId];
+  const newRefactorComponents = { ...state.refactorComponents };
+  const componentToDelete = newRefactorComponents[componentId];
   // loops through childrenIds array, gives each child the
   // parent's parent if possible
-  const newRefactorComponents = refactorComponents;
   componentToDelete.childrenIds.forEach((el) => {
     newRefactorComponents[el].parentId = componentToDelete.parentId;
   });
+  if (componentToDelete.parentId !== '') {
+    newRefactorComponents[componentToDelete.parentId].childrenIds = componentToDelete.childrenIds;
+  }
+  //-----
+
+  return {
+    ...state,
+    components,
+    refactorComponents: newRefactorComponents,
+  };
+};
+
+// helper function for setSelectableP
+const refactorGetSelectableParents = (id, childrenIds, refactorComponents) => {
+  // base case: if the childrenIds array is empty return the id of the object
+  if (childrenIds.length <= 0) return [id];
+
+  let output = [];
+  output.push(id);
+  // otherwise for each element in childrenIds, call the function and add to output
+  childrenIds.forEach((el) => {
+    output = output.concat(refactorGetSelectableParents(el, refactorComponents[el].childrenIds, refactorComponents));
+  });
+
+  return output;
+};
+
+/* should eventually be refactored so that it is only called for an
+ individual component when that individual component is rendered */
+export const setSelectableP = (state) => {
+  // refactor
+  const { refactorComponents } = state;
+  const keys = Object.keys(refactorComponents);
+  const newRefactorComponents = {};
+  // for each variable
+  keys.forEach((el) => {
+    // gets all children in el's lineage
+    const filter = refactorGetSelectableParents(el, refactorComponents[el].childrenIds, refactorComponents);
+    // filters out all keys that exist in lineage (and also the el)
+    const selectableParents = keys.filter(key => (!(filter.includes(key)) && (key !== el)));
+    // adds to new object
+    newRefactorComponents[el] = {
+      ...refactorComponents[el],
+      selectableParents,
+    };
+  });
+  //-----
+
+  return {
+    ...state,
+    components: setSelectableParents(state.components),
+    refactorComponents: newRefactorComponents,
+  };
+};
+
+export const setSelectableR = (state, id) => {
+  // refactor
+  const refactorComponents = { ...state.refactorComponents };
+  const compToChange = refactorComponents[id];
+  // displays component as possible route if the element in the array is present in the childrenIds but not in the routes
+  const routesArr = compToChange.routes.map(el => el.id);
+  const compsToAdd = compToChange.childrenIds.filter(el => !(routesArr.includes(el)));
+
+  // this is necessary to interact with legacy code. creates an object --
+  const newSelectableRoutes = compsToAdd.map(el => ({
+    id: el,
+    title: refactorComponents[el].title,
+  }));
+  //--
+
+  refactorComponents[id].selectableRoutes = newSelectableRoutes;
+  //-----
+
+  return {
+    ...state,
+    components: setSelectableRoutes(state.components, id),
+    refactorComponents,
+  };
+};
+
+export const addRoute = (state, { path, routerCompId, routeCompId }) => {
+  // refactor
+  const refactorComponents = { ...state.refactorComponents };
+
+  refactorComponents[routerCompId].routes = [...refactorComponents[routerCompId].routes,
+    {
+      path,
+      routeCompId,
+      title: refactorComponents[routeCompId].title,
+    }];
 
 
   //-----
 
   return {
     ...state,
-    components,
+    components: state.components.map((comp) => {
+      if (comp.id === routerCompId) {
+      // crete new route object
+        const newRoute = { path, routeCompId };
+        // build the new Route Object from the selectable Routes info
+        comp.selectableRoutes.forEach((route) => {
+          if (route.id === routeCompId) {
+            newRoute.routeCompTitle = route.title;
+          }
+        });
+        comp.routes = [...comp.routes, newRoute];
+        return { ...comp };
+      }
+      if (comp.id === routeCompId) return { ...comp, route: true };
+      return comp;
+    }),
+    refactorComponents,
   };
 };
 
-export const setSelectableP = state => ({
-  ...state,
-  components: setSelectableParents(state.components),
-});
+export const deleteRoute = (state, { routerCompId, routeCompId }) => {
+  // refactor
+  const refactorComponents = { ...state.refactorComponents };
+  const compToChange = refactorComponents[routerCompId];
+  // takes routeCompId out from the component
+  refactorComponents[routerCompId].routes = compToChange.filter(el => el.routeCompId === routeCompId);
+  //-----
 
-export const setSelectableR = (state, id) => ({
-  ...state,
-  components: setSelectableRoutes(state.components, id),
-});
 
-export const addRoute = (state, { path, routerCompId, routeCompId }) => ({
-  ...state,
-  components: state.components.map((comp) => {
-    if (comp.id === routerCompId) {
-      // crete new route object
-      const newRoute = { path, routeCompId };
-      // build the new Route Object from the selectable Routes info
-      comp.selectableRoutes.forEach((route) => {
-        if (route.id === routeCompId) {
-          newRoute.routeCompTitle = route.title;
-        }
-      });
-      comp.routes = [...comp.routes, newRoute];
-      return { ...comp };
-    }
-    if (comp.id === routeCompId) return { ...comp, route: true };
-    return comp;
-  }),
-});
-
-export const deleteRoute = (state, { routerCompId, routeCompId }) => ({
-  ...state,
-  components: state.components.map((comp) => {
-    if (comp.id === routerCompId) {
-      const routes = [...comp.routes];
-      let indexOfRouteToDelete;
-      routes.forEach((route, i) => {
-        if (route.routeCompId === routeCompId) indexOfRouteToDelete = i;
-      });
-      routes.splice(indexOfRouteToDelete, 1);
-      comp.routes = routes;
-      return { ...comp };
-    }
-    if (comp.id === routeCompId) {
-      if (!comp.visible) setVisible(state, comp.id);
-      return { ...comp, route: false, visible: true };
-    }
-    return comp;
-  }),
-});
+  return {
+    ...state,
+    components: state.components.map((comp) => {
+      if (comp.id === routerCompId) {
+        const routes = [...comp.routes];
+        let indexOfRouteToDelete;
+        routes.forEach((route, i) => {
+          if (route.routeCompId === routeCompId) indexOfRouteToDelete = i;
+        });
+        routes.splice(indexOfRouteToDelete, 1);
+        return { ...comp, routes };
+      }
+      if (comp.id === routeCompId) {
+        if (!comp.visible) setVisible(state, comp.id);
+        return { ...comp, route: false, visible: true };
+      }
+      return comp;
+    }),
+    refactorComponents,
+  };
+};
 
 export const exportFilesSuccess = (state, { status, dir }) => ({
   ...state,
@@ -332,9 +430,25 @@ export const updatePosition = (state, { id, x, y }) => {
     }
     return component;
   });
+
+  // refactor
+  const refactorComponents = { ...state.refactorComponents };
+  refactorComponents[id] = {
+    ...refactorComponents[id],
+    position: {
+      x,
+      y,
+      width: refactorComponents[id].position.width,
+      height: refactorComponents[id].position.height,
+    },
+  };
+  //-----
+
+
   return {
     ...state,
     components,
+    refactorComponents,
   };
 };
 
@@ -349,7 +463,7 @@ export const updatePosition = (state, { id, x, y }) => {
  * @param {number} x - updated x coordinate
  * @param {number} y - updated y coordinate
  * @param {number} width - updated width
- * @param {number} height - updated height
+ * @param {number} heiht - updated height
  */
 
 export const handleTransform = (state, {
@@ -369,9 +483,18 @@ export const handleTransform = (state, {
     }
     return component;
   });
+
+  // refactor
+  const refactorComponents = { ...state.refactorComponents };
+  refactorComponents[id].position = {
+    x, y, width, height,
+  };
+  //----
+
   return {
     ...state,
     components,
+    refactorComponents,
   };
 };
 
@@ -387,9 +510,17 @@ export const toggleDragging = (state, status) => {
     ...component,
     draggable: status,
   }));
+
+  // refactor
+  const refactorComponents = { ...state.refactorComponents };
+  refactorComponents.draggable = status;
+  //-----
+
+
   return {
     ...state,
     components,
+    refactorComponents,
   };
 };
 
@@ -422,9 +553,9 @@ export const moveToBottom = (state, componentId) => {
 export const openExpansionPanel = (state, { component }) => ({
   ...state,
   focusComponent: component,
+  // focusComponent: state.refactorComponent[componentId],
 });
 
-// done
 export const addProp = (state, {
   key, value = null, required, type, origin,
 }) => {
@@ -493,8 +624,8 @@ export const setVisible = (state, compId) => ({
   components: state.components.map((comp) => {
     if (comp.parentId === compId) setVisible(state, comp.id);
     if (comp.id === compId) {
-      comp.visible = !comp.visible;
-      return { ...comp };
+      // comp.visible = !comp.visible;
+      return { ...comp, visible: !comp.visible };
     }
     return comp;
   }),

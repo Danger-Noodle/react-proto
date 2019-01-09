@@ -3,7 +3,7 @@ import {
   ADD_COMPONENT,
   UPDATE_COMPONENT,
   DELETE_COMPONENT,
-  ADD_NEW_CHILD,
+  ADD_CHILD,
   DELETE_CHILD,
   REASSIGN_PARENT,
   SET_SELECTABLE_PARENTS,
@@ -49,7 +49,7 @@ export const loadInitData = () => (dispatch) => {
 export const addNewChild = (({
   id, childIndex, childId,
 }) => ({
-  type: ADD_NEW_CHILD,
+  type: ADD_CHILD,
   payload: {
     id, childIndex, childId,
   },
@@ -63,6 +63,16 @@ export const deleteChild = (({
     parent, parentId, childId,
   },
 }));
+
+export const addRoute = compToAdd => ({
+  type: ADD_ROUTE,
+  payload: compToAdd,
+});
+
+export const deleteRoute = compToDelete => ({
+  type: DELETE_ROUTE,
+  payload: compToDelete,
+});
 
 export const reassignParent = (({ index, id, parent }) => ({
   type: REASSIGN_PARENT,
@@ -231,15 +241,6 @@ export const removePropFromDisplayed = (propId, compId) => ({
   payload: { propId, compId },
 });
 
-export const addRoute = compToAdd => ({
-  type: ADD_ROUTE,
-  payload: compToAdd,
-});
-
-export const deleteRoute = compToDelete => ({
-  type: DELETE_ROUTE,
-  payload: compToDelete,
-});
 
 export const setVisible = compId => ({
   type: SET_VISIBLE,
